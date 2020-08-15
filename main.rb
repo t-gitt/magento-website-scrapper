@@ -57,8 +57,8 @@ def self.showAll(db)
            
 	rescue SQLite3::Exception => e 
 	    
-	    puts "Exception occurred"
-	    puts e
+	    # puts "Exception occurred"
+	    # puts e
 	    
 	ensure
 	    stm.close if stm
