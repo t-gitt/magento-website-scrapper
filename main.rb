@@ -117,6 +117,7 @@ end
 ############# MAINEMENU function to wipe DB data #############
 def self.cleanDB(db)
 	begin
+		puts "Wiping Database ..."
 		sqlQuery =  "SELECT * FROM sqlite_master  WHERE type = 'table'"
 
 		db.execute "DROP TABLE Products"
