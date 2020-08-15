@@ -2,7 +2,7 @@
 
 ## Installation
 
-clone repo `git clone `
+clone repo `git clone https://github.com/t-gitt/magento-website-scrapper.git`
 
 `cd magento-website-scrapper` 
 
