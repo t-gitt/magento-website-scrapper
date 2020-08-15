@@ -17,29 +17,30 @@ run the main script file `./main.rb`
 
 
 ## Main Menu Functions
-Show All Products
 
-	| List all products in SQLITE DB
+### Show All Products
+
+	List all products in SQLITE DB
 
 ![](showAll.gif)	
 
-Update DB
+### Update DB
 
-  	| Scrap Magento website and store its value in the DB
+  	Scrap Magento website and store its value in the DB
 
 ![](update.gif)	
 
-Search DB
+### Search DB
 
-  	| Search for key words in DB
+  	Search for key words in DB
 
 ![](search.gif)	
 
-Wipe DB
+### Wipe DB
 
-  	| Clean DB and start fresh
+  	Clean DB and start fresh
 
-EXIT
+### EXIT
 
-  	| Quit application
+  	Quit application
 
