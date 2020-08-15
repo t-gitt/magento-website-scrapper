@@ -16,7 +16,7 @@ install dependancies `bundle install`
 run the main script file `./main.rb`
 
 
-### Main Menu Functions
+## Main Menu Functions
 Show All Products
 	| List all products in SQLITE DB
 
