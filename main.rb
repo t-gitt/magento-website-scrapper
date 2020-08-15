@@ -4,7 +4,6 @@ require 'nokogiri'
 require 'byebug'
 require 'open-uri'
 require 'sqlite3'
-require 'database_cleaner'
 require 'tty-prompt'
 require 'tty-box'
 
