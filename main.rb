@@ -10,18 +10,23 @@ require 'tty-box'
 
 ############# MAINEMENU function to display Main Menu #############
 def self.mainMenu
+
+	############# initialize variables #############
 	db = SQLite3::Database.new "magento.db"
+	url = URI.open("https://magento-test.finology.com.my/")
+
 	prompt = TTY::Prompt.new
 
 	drawBox("MAINEMENU")
 	puts ""
 	prompt.select("Magneto Website Scrapper") do |menu|
 	  menu.choice "Show All Products", -> { self.showAll(db) }
-	  menu.choice "Update DB", -> { self.crawl(db) }
+	  menu.choice "Update DB", -> { self.crawl(db, url) }
 	  menu.choice "Search DB", -> { self.search(db) }
 	  menu.choice "Wipe DB", -> { self.cleanDB(db) }
 	  menu.choice "EXIT", -> { :quit }
 	end
+	puts ""
     db.close if db
 end
 
@@ -81,27 +86,29 @@ def self.search(db)
 	puts "Enter your search query:"
 	keyword = gets
 	keyword = keyword.delete("\n")
+	if keyword.split.count > 0
       
-    statement = %{SELECT * FROM Products WHERE name like "%#{keyword}%" OR sku="#{keyword}" OR id="#{keyword}" OR description like "%#{keyword}%" OR additional like "%#{keyword}%"}       
-    vals = db.execute statement
-	if vals
-		vals.each do |val|
+	    statement = %{SELECT * FROM Products WHERE name like "%#{keyword}%" OR sku="#{keyword}" OR id="#{keyword}" OR description like "%#{keyword}%" OR additional like "%#{keyword}%"}       
+	    vals = db.execute statement
+		if vals
+			vals.each do |val|
+				puts ""
+				puts("Name: #{val[1]}")
+				puts("Price: #{val[2]}")
+				puts("Description: #{val[3]}")
+				puts("Extra Information: #{val[4]}")
+				puts("Sku: #{val[5]}")
+				puts("Rating: %#{val[6]}")
+				puts("URL: %#{val[7]}")
+				puts ""
+				# puts("Page in progress: #{product_url[:category_url]}")
+				puts("Product ID: #{val[0]}")
+				puts ""
+			end
+			puts "Total result: #{vals.count}"
 			puts ""
-			puts("Name: #{val[1]}")
-			puts("Price: #{val[2]}")
-			puts("Description: #{val[3]}")
-			puts("Extra Information: #{val[4]}")
-			puts("Sku: #{val[5]}")
-			puts("Rating: %#{val[6]}")
-			puts("URL: %#{val[7]}")
-			puts ""
-			# puts("Page in progress: #{product_url[:category_url]}")
-			puts("Product ID: #{val[0]}")
-			puts ""
+			
 		end
-		puts "Total result: #{vals.count}"
-		puts ""
-		
 	end
 
     
@@ -138,11 +145,10 @@ def self.cleanDB(db)
 end
 
 ############# MAINEMENU function to parse data from website and store it in DB #############
-def self.crawl(db)
+def self.crawl(db, url)
 
 	self.cleanDB(db)
 	############# initialize variables #############
-	url = URI.open("https://magento-test.finology.com.my/")
 	parsedPage = Nokogiri::HTML(url)
 
     db.execute "CREATE TABLE IF NOT EXISTS Products(id INTEGER PRIMARY KEY, name TEXT, price REAL, description TEXT, additional TEXT, sku TEXT UNIQUE, rating REAL, url TEXT)"
@@ -189,8 +195,6 @@ def self.crawl(db)
 		$products_url.each do |product_url|
 		begin
 
-
-
 			######### Start DB transaction ###########	
 
 			db = SQLite3::Database.open "magento.db"
@@ -224,6 +228,7 @@ def self.crawl(db)
 				rate = ''
 			end
 
+			############# define product object ############# 
 			product = {
 				name: parsedPage.css('h1.page-title').text.strip.delete("\n"),
 				price: parsedPage.css('span.price')[0].text.delete("$").to_f,
@@ -247,6 +252,8 @@ def self.crawl(db)
 				rating = "00"
 			end
 			db.execute %Q[INSERT INTO Products VALUES(#{id},"#{nameProduct}", #{price}, "#{description.gsub('"', "'")}", "#{additional}", "#{sku}", #{rating}, "#{product_url[:url]}")]
+
+			############# commit transactio ############# 
 			db.commit
 
 			$products << product
@@ -282,7 +289,6 @@ def self.scrapProductUrls(category_url)
 			product_cards = parsedPage.css('li.product-item')
 			product_cards = product_cards.slice(0..product_cards.count - 3)
 
-
 			product_cards.each do |product_card|
 					
 					product_url = {
@@ -291,7 +297,7 @@ def self.scrapProductUrls(category_url)
 						category_url: category_url 
 					}
 
-					$products_url<< product_url
+					$products_url << product_url
 
 			 end
 
