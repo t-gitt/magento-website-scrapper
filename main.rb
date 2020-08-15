@@ -58,7 +58,7 @@ def self.showAll(db)
 	rescue SQLite3::Exception => e 
 	    
 	    # puts "Exception occurred"
-	    # puts e
+	    puts e
 	    
 	ensure
 	    stm.close if stm
@@ -105,7 +105,7 @@ def self.search(db)
     
 	rescue SQLite3::Exception => e 
 	    
-	    puts "Exception occurred"
+	    # puts "Exception occurred"
 	    puts e
 	    
 	ensure
@@ -118,6 +118,7 @@ end
 def self.cleanDB(db)
 	begin
 		puts "Wiping Database ..."
+		
 		sqlQuery =  "SELECT * FROM sqlite_master  WHERE type = 'table'"
 
 		db.execute "DROP TABLE Products"
@@ -126,8 +127,8 @@ def self.cleanDB(db)
 
 	rescue SQLite3::Exception => e 
 	    
-	    puts "Exception occurred"
-	    puts e
+	    # puts "Exception occurred"
+	    # puts e
 	    
 	ensure
 	end
