@@ -147,7 +147,10 @@ end
 ############# MAINEMENU function to parse data from website and store it in DB #############
 def self.crawl(db, url)
 
+
+	############# call cleanDB function to wipe DB #############
 	self.cleanDB(db)
+
 	############# initialize variables #############
 	parsedPage = Nokogiri::HTML(url)
 
@@ -160,20 +163,9 @@ def self.crawl(db, url)
 	$categories = Array.new
 
 
+	############# call getCategories function to get categories #############
+	self.getCategories(parsedPage)
 
-	############# find category elements #############
-	navBar = parsedPage.css('nav.ul.ui-menu')
-	categories_elements = parsedPage.css('nav.navigation').css('ul').css('li.level1')
-
-	############# get list of categories ############# 
-	categories_elements.each do |category_element|
-		category = {
-			name: category_element.css('a').text,
-			url: category_element.css('a')[0].attributes["href"].value
-		}
-		
-	$categories << category
-	end
 
 
 	############# iterate through each category page & get products list ############# 
@@ -277,6 +269,24 @@ def self.crawl(db, url)
 	end
 
 self.mainMenu
+
+end
+
+def self.getCategories(parsedPage)
+
+		############# find category elements #############
+		navBar = parsedPage.css('nav.ul.ui-menu')
+		categories_elements = parsedPage.css('nav.navigation').css('ul').css('li.level1')
+
+		############# get list of categories ############# 
+		categories_elements.each do |category_element|
+			category = {
+				name: category_element.css('a').text,
+				url: category_element.css('a')[0].attributes["href"].value
+			}
+			
+		$categories << category
+		end
 
 end
 
